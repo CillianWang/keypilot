@@ -1,99 +1,211 @@
+<p align="center">
+  <img src="Resources/Brand/KeyPilot.svg" width="96" height="96" alt="KeyPilot 图标">
+</p>
+
 # KeyPilot
 
-原生 macOS 13+ 菜单栏键盘导航工具。SwiftPM、AppKit、SwiftUI、Accessibility、CGEvent 和 Core Animation；无第三方依赖、服务器、OCR、录屏权限或联网需求。
+**用键盘选区域、点按钮、滚动页面。**
 
-## 构建与安装
+KeyPilot 是一个原生 macOS 菜单栏工具：按下快捷键，为前台窗口中可操作的控件显示字母标签，输入标签即可点击。用 `J` / `K` 滚动，用 `I` 临时输入文字，让双手更少离开键盘。
+
+Native keyboard navigation for macOS, built with Swift, AppKit, and Accessibility APIs.
+
+**macOS 13+ · Swift 5.9+ · 无第三方包依赖 · 本机运行 · [MIT](LICENSE)**
+
+[开始使用](#开始使用) · [快捷键](#快捷键) · [常见问题](#常见问题) · [开发](#开发) · [来源与许可](docs/PROVENANCE.md)
+
+## 可以做什么
+
+| 能力 | 使用方式 |
+| --- | --- |
+| 按区域导航 | 用 `W` / `E` / `R` 或 `Tab` 在侧栏、内容区等区域间切换 |
+| 标签点击 | 输入两位或三位字母码；也可用方向键选择后按 `Return` 确认 |
+| 连续滚动 | 按住 `J` / `K` 向下 / 向上滚动，按住 `Shift` 加速 |
+| 展开行内操作 | 按 `;` 再输入行标签，悬停并展开该行的次要操作 |
+| 临时输入 | 按 `I` 透传文字与快捷键，按 `Esc` 回到导航 |
+| 调整外观 | 浅色、深色、茶色、跟随系统；可调字号、边框颜色和动画 |
+
+![KeyPilot 外观设置与标签预览](docs/images/settings-appearance.png)
+
+*由实际设置视图离屏渲染的示例，标签内容为模拟数据；不代表第三方应用兼容性或桌面实时毛玻璃效果。*
+
+## 开始使用
+
+当前版本为 **0.1.0（build 16）**。目前提供源码构建，尚无可直接下载的 Developer ID 公证安装包。
+
+### 1. 准备环境
+
+- macOS 13 或更高版本。
+- 支持 Swift 5.9+ 的 Xcode 或 Command Line Tools，以及 Python 3。
+- 用于本机安装的有效代码签名证书及其私钥。
+
+先确认命令行工具可用：
 
 ```sh
+swift --version
+python3 --version
+```
+
+如缺少开发工具，可运行 `xcode-select --install`。如工具提示 Xcode 许可未接受，请先在 Xcode 中阅读并完成许可与首次启动设置，再继续构建。
+
+### 2. 获取代码并运行测试
+
+```sh
+git clone https://github.com/CillianWang/keypilot.git
+cd keypilot
 swift test
+```
+
+单元测试不需要初始化签名，也不需要授予辅助功能权限；其中包含 AppKit 测试，需要在 macOS 环境执行。
+
+### 3. 初始化本机签名
+
+KeyPilot 固定使用同一个签名身份和安装路径，降低更新时辅助功能授权失效的可能性。每台新机器都需要初始化自己的签名，仓库不包含开发者的证书或私钥。
+
+在「钥匙串访问」的「证书助理 → 创建证书」中创建用于**代码签名**的本机证书，或使用已有的有效开发证书。然后列出可用身份：
+
+```sh
+security find-identity -v -p codesigning
+```
+
+将下面的占位内容替换为输出中的 **40 位 SHA-1 指纹**：
+
+```sh
+python3 scripts/signing.py init --identity '替换为你的40位证书SHA1指纹'
+python3 scripts/signing.py check
+```
+
+如果命令没有列出有效身份，请先确认钥匙串中的证书、关联私钥及其信任状态。脚本不会自动创建证书，也不会在失败时退回临时签名。已有 KeyPilot 安装时，需要沿用原签名身份。
+
+### 4. 构建与安装
+
+```sh
 bash scripts/build.sh
 python3 scripts/install.py
 ```
 
-当前机器的固定签名身份已初始化。安装位置始终是 `~/Applications/KeyPilot.app`，Bundle ID 始终是 `dev.pingy.keypilot`。菜单栏打开设置；关闭设置不退出。首次启用需要在系统设置的辅助功能权限中允许这个安装包，再选择“重新连接”。不会修改 TCC 或设置登录启动。
+构建产物在 `dist/KeyPilot.app`。安装脚本会备份现有 App、偏好与签名配置，验证产物后安装到 `~/Applications/KeyPilot.app`，并启动应用。
 
-新机器先在“钥匙串访问”的证书助理创建本机代码签名证书，或使用已有有效开发证书。私钥留在本机钥匙串，然后显式绑定身份：
+### 5. 授权并试用
 
-```sh
-security find-identity -v -p codesigning
-python3 scripts/signing.py init --identity <本机有效代码签名证书的SHA1>
-```
+1. 在菜单栏找到 KeyPilot，打开「设置… → 连接与权限」。
+2. 打开「系统设置 → 隐私与安全性 → 辅助功能」，允许 `~/Applications/KeyPilot.app`。
+3. 回到 KeyPilot，点击「重新连接」，确认「辅助功能权限」和「全局快捷键」就绪。
+4. 切换到要操作的窗口，按 **`⇧⌘Space`** 开始导航。
 
-配置位于 `~/Library/Application Support/KeyPilot/signing.json`，不在仓库内。已有安装时初始化会核对并复用原证书和 designated requirement。证书、私钥或配置缺失时构建失败；不会生成新身份或退回 ad-hoc。当前本机使用已有 Apple Development 身份，**不是 Developer ID 公证发行**。证书到期后的身份迁移必须显式处理，不能无声替换。
+第一次可以按这个顺序试用：**唤出 → `Tab` 选择区域 → 输入屏幕上的按钮标签 → `J` / `K` 滚动 → `Esc` 退出**。默认完整标签匹配后自动点击，可在「通用」中关闭。
 
-安装脚本先验证产物，备份原 App、偏好和签名配置，正常退出旧进程，验证暂存包再替换，重启后读取真实权限与热键状态。备份位于 `~/Library/Application Support/KeyPilot/Backups/`。应用版本与构建号分别在 `Resources/Info.plist` 中管理。
+应用只显示菜单栏图标；关闭设置窗口后仍继续运行。首次安装后看到“辅助功能权限待授权”是预期状态。它不需要录屏权限，也不会自动设置开机启动。
 
-## 操作
+## 快捷键
+
+除唤出快捷键外，下表操作均在导航模式中使用。`⇧` 是 Shift，`⌘` 是 Command。标签按物理键位识别，不依赖当前输入法。
 
 | 按键 | 行为 |
 | --- | --- |
-| ⇧⌘Space | 进入或完全退出导航 |
-| ⇧⌘J | 进入同一导航；激活后再次按不会退出 |
-| W / E / R 及其两位组合 | 选区；超过九个区域用 Tab 跨组 |
-| Tab / ⇧Tab | 下一个 / 上一个区域 |
-| J / K | 按住向下 / 向上滚动，同时按住为零；Shift 加速 |
-| gg / Home；⇧G / End | 顶部；底部 |
-| Space | 显示全窗口及应用菜单的全量 AX 候选，包括已折叠的行内操作；保留滚动区 |
-| ; 然后行标签 | 选择该行并悬停，刷新后展开它的操作按钮；不点击该行 |
-| ;（已经展开时） | 收起行内操作；用户未移动鼠标时恢复原指针位置 |
-| 两位或三位按钮码 | 精确匹配后自动点击；可在设置关闭自动点击 |
-| ↑ / ↓，Return | 当前页选择、左键点击；⇧Return 右键；⌘Return Command 点击 |
-| [ / ]；Backspace | 翻页；删除前缀 |
-| I | 临时输入，保留当前区边框，普通文字和快捷键透传 |
-| Esc | 输入模式回到导航；导航中直接退出 |
+| `⇧⌘Space` | 进入或完全退出导航 |
+| `⇧⌘J` | 进入导航；已在导航中时不退出 |
+| `W` / `E` / `R` | 选择区域；区域较多时使用屏幕上的两位区域码 |
+| `Tab` / `⇧Tab` | 下一个 / 上一个区域；超过九个区域时可跨组切换 |
+| 两位或三位按钮标签 | 完整匹配后自动点击；关闭自动点击时需按 `Return` |
+| `↑` / `↓`，`Return` | 在当前页选择目标并左键点击 |
+| `⇧Return` / `⌘Return` | 右键点击 / Command 点击当前目标 |
+| `J` / `K` | 按住向下 / 向上滚动；同时按住时停止 |
+| `Shift` | 按住时加速滚动，默认 2.5 倍 |
+| `gg` / `Home` | 滚动到顶部 |
+| `⇧G` / `End` | 滚动到底部 |
+| `Space` | 显示全窗口及应用菜单的全量候选，包括折叠的行内操作 |
+| `;` → 行标签 | 选择并悬停该行，展开其操作按钮；不会点击该行 |
+| `;`（已展开时） | 收起行内操作 |
+| `[` / `]` | 上一页 / 下一页标签 |
+| `Backspace` | 删除已输入的标签前缀 |
+| `I` | 临时输入模式，文字和应用快捷键透传 |
+| `Esc` | 输入模式回到导航；导航模式直接退出 |
 
-大区字母牌使用薄荷绿，默认高亮边框使用更浅的薄荷绿；按钮保持通透的浅蓝白原生毛玻璃和薄荷绿选中态，字母清晰。圆角、柔和细边与轻阴影帮助区分背景。设置中可选择浅色、深色、茶色或跟随系统；茶色按钮使用暖奶白字和浅琥珀选中态。区域内部保持透明，遵循系统“减少透明度”。
+点击后继续导航。输入按钮标签的前缀期间，`J` / `K` 等按键优先用于补全标签；需要重新滚动时先用 `Backspace` 清空前缀。
 
-点击后继续导航。默认速度 900 px/s，Shift 2.5 倍，按钮字号 13 pt。设置持久保存启用状态、自动点击、速度、字号、颜色和动画。按物理键位识别，标签输入不依赖当前输入法。
+默认收起可识别列表行中的次要操作，减少标签拥挤。`Space` 可随时查看全量候选，也可在设置中关闭「按需展开列表行操作」。滚动、切区或临时输入会结束当前行的展开状态。
 
-默认启用“按需展开列表行操作”：保留行的主目标标签，收起该行内的按钮、弹出按钮等次要操作。按 `;` 后输入完整行标签来展开，也可用方向键选行后 Return；关闭自动点击时，完整标签仍需 Return 确认。没有自身点击动作的列表项使用仅用于展开的行标签，不会把容器当按钮点击。再次按 `;` 收起；滚动、切区或临时输入也结束展开。行结构无法确定时保留原候选，浮层菜单仍直接可选，内文链接和输入控件不随操作按钮折叠。设置可关闭此策略，`Space` 随时提供全量入口。
+## 隐私与本地数据
 
-分组也支持没有列表角色的普通容器：较宽主目标及其小按钮、有独立正文的重复内容块，以及共用容器内纵向排列的主目标和同行小按钮。仅凭按钮大小不足以折叠；结构仍不明确时保留原标签。普通工具栏和带输入控件的表单不参与这些推断。
+KeyPilot 通过 macOS Accessibility API 读取前台应用的控件结构，并通过系统事件执行点击和滚动。应用不包含网络请求、云端服务、OCR 或屏幕截图逻辑；不会上传遥测，不记录输入文字、窗口标题、控件正文或 URL。
 
-操作控件除了标准按钮，也包括通过 AXPress/AXPick 暴露点击动作的普通组或图像；它们必须先满足行分组规则才会折叠。正文链接、可点击文本和具有专用语义的输入/选择控件保持可用。
+| 数据 | 位置 |
+| --- | --- |
+| 应用 | `~/Applications/KeyPilot.app` |
+| 偏好 | macOS UserDefaults，域名 `dev.pingy.keypilot` |
+| 固定签名配置、就绪状态 | `~/Library/Application Support/KeyPilot/` |
+| 安装备份 | `~/Library/Application Support/KeyPilot/Backups/` |
+| 本地诊断日志 | `~/Library/Logs/KeyPilot/metrics.jsonl` |
 
-## 配置界面与标识
+日志只记录计数、耗时、模式与错误状态，达到约 2 MB 后清理。签名私钥保留在系统钥匙串中。`artifacts/`、`.build/`、`dist/` 属于本机构建或验证输出，已被 Git 忽略。
 
-菜单栏选择「设置…」打开四页配置：通用、外观、快捷键、连接与权限；也可用 ⌘1–4 切页。设置实时保存，窗口可缩放并记住位置，关闭后继续在菜单栏运行。外观页复用正式标签/边框绘制器进行实时预览，支持原生颜色选择器、字号和玻璃样式；恢复默认外观只影响外观项。界面跟随 macOS 浅色/深色，侧栏使用原生毛玻璃。
+## 常见问题
 
-Logo 将 K 的上臂延伸成方向箭头，放在薄荷绿键帽中；菜单栏采用同一图形的单色模板。矢量源文件为 `Resources/Brand/KeyPilot.svg`，原生绘制代码在 `Sources/KeyPilot/Brand.swift`。构建时生成 16–1024 px 图标集，打包为 AppIcon.icns；可导出的 PNG 位于 `artifacts/brand/KeyPilot.png`。
+| 问题 | 处理方式 |
+| --- | --- |
+| 安装后没有主窗口 | KeyPilot 是菜单栏应用，从菜单栏打开「设置…」；退出请使用菜单中的「退出 KeyPilot」 |
+| 快捷键没有反应 | 确认应用已启用、辅助功能权限已授予，再点「重新连接」；检查其他应用是否占用了相同快捷键。当前版本的两组唤出快捷键固定 |
+| 某个控件没有标签 | 尝试切换区域或按 `Space`；自绘控件若未向 Accessibility API 暴露结构，目前无法可靠识别 |
+| 标签太多，或出现看不见的按钮 | 启用按需展开行操作。部分应用会把透明按钮也暴露给辅助功能接口，KeyPilot 无法仅凭该接口准确判断视觉可见性 |
+| 更新时提示签名身份不匹配 | 恢复原证书及私钥，保留原签名配置；脚本会拒绝无声替换身份 |
+| 命令行自检的权限状态与 App 不同 | 终端派生进程的权限归属可能不同，以正常启动 App 的「连接与权限」页为准 |
 
-```sh
-dist/KeyPilot.app/Contents/MacOS/KeyPilot --render-settings "$PWD/artifacts/settings"
-dist/KeyPilot.app/Contents/MacOS/KeyPilot --export-brand "$PWD/artifacts/brand"
+**兼容性边界：**部署目标为 macOS 13+；现有记录主要来自 Apple Silicon 上的 macOS 15.8。Intel、其他系统版本、多显示器及不同应用的事件链仍需更多实机验证。测试覆盖不等于所有应用兼容，详细记录见 [验证记录](docs/VALIDATION.md)。
+
+## 开发
+
+项目使用 Swift Package Manager，直接调用系统框架，没有外部 Swift 包。Python 脚本只使用标准库和仓库内模块。
+
+```text
+Sources/KeyPilotCore/        状态机、编码、布局、区域与扫描逻辑
+Sources/KeyPilot/            AppKit / SwiftUI、辅助功能、事件投递与设置
+Tests/KeyPilotCoreTests/     核心行为与边界条件测试
+Tests/KeyPilotRuntimeTests/  AppKit、输入投递与设置测试
+Resources/                  App 元数据与矢量图标
+scripts/                    签名、构建、安装与验证
+docs/                       设计、验证记录与来源说明
 ```
 
-设置渲染采用隔离偏好，仅生成示例状态图，不更改用户设置；截图不代表实际授权验证或真实桌面毛玻璃合成。实际启动状态仍以安装检查和配置页显示为准。
-
-## 工程结构
-
-- `Sources/KeyPilotCore/`：纯状态机、区域选择、编码簿、空间/编码分页、坐标与落点、可注入读取器的分片扫描、有限延后刷新计划。
-- `Sources/KeyPilot/`：正式 AX 读取器与对象身份注册表、串行 AX/控制/布局队列、事件 tap、Carbon 热键、滚轮/点击投递、正式覆盖层、原生设置和本地诊断。
-- `Tests/KeyPilotCoreTests/`：真实边界条件的离线回归，使用同一个扫描器及布局器；无需桌面授权。
-- `scripts/`：固定签名、打包安装、绘制检查、回归及性能报告。
+日常修改先运行：
 
 ```sh
+swift test
+```
+
+完整本地回归还需要已初始化的签名身份和已构建的 `dist/KeyPilot.app`：
+
+```sh
+bash scripts/build.sh
 bash scripts/regression.sh
 python3 scripts/performance.py
 ```
 
-回归绘图调用正式 `OverlayCanvas`，没有产品练习窗口。图像和验证输出在 `artifacts/`。`swift test` 可使用支持 Swift 5.9+ 的 Command Line Tools；本次实际构建工具与验收结果见 [验证记录](docs/VALIDATION.md)。
+性能报告使用实际操作产生的本地诊断日志，没有样本时不能作为性能结论。历史 build 16 记录包含 93 项 XCTest 通过的结果；参见 [验证记录](docs/VALIDATION.md)，这不是持续集成状态。
 
-辅助诊断：
+<details>
+<summary>生成预览、图标与诊断信息</summary>
 
 ```sh
+# 真实设置视图的示例渲染；使用隔离偏好
+dist/KeyPilot.app/Contents/MacOS/KeyPilot --render-settings "$PWD/artifacts/settings"
+
+# 从项目内矢量绘制代码导出 PNG 和 iconset
+dist/KeyPilot.app/Contents/MacOS/KeyPilot --export-brand "$PWD/artifacts/brand"
+
+# 查看命令行进程的基本状态
 ~/Applications/KeyPilot.app/Contents/MacOS/KeyPilot --self-check
+
+# 读取前台窗口的结构计数；需要该进程具备辅助功能权限
 ~/Applications/KeyPilot.app/Contents/MacOS/KeyPilot --scan-frontmost
 ```
 
-终端派生进程的权限归属可能与通过 Launch Services 启动的 App 不同；安装脚本以已启动 App 写入的 `ready.json` 为准，不能只凭命令行助手宣称权限保留。`--scan-frontmost` 遇到权限不足直接失败。
+</details>
 
-日志仅含计数、模式、页数、时间和错误状态，保存在 `~/Library/Logs/KeyPilot/metrics.jsonl`，约 2 MB 轮换，不保存文字内容、标题或 URL，不上传。
+更详细的实现取舍见 [设计说明](docs/DESIGN.md)。提交 [Issue](https://github.com/CillianWang/keypilot/issues) 时，请附上 macOS 版本、芯片架构、应用版本、目标应用与复现步骤；只分享必要的诊断信息。
 
-## 兼容性
+## 许可证与来源
 
-所有应用走同一套结构规则，没有 App 名称、Bundle ID、网站或会话标题特例。AX 未公开的自绘元素无法可靠索引。一次扫描受节点数、候选数、时间及系统 IPC 超时预算保护；截断扫描会明确标记不完整，不释放尚未确认消失的身份。
+本仓库采用 [MIT 许可证](LICENSE)，允许商用、修改和再发布，需保留版权及许可声明。
 
-某些应用让“更多、复制、编辑”等按钮平时透明、悬停才显示，但始终将它们暴露为可点击的 AX 元素。模型将可操作性与视觉可见性（确认可见、确认隐藏、未知）分开记录；AXHidden 缺失或为 false、矩形有效、命中成功均不会升级为确认可见。按需展开是展示折中，也可能收起常显按钮，不能保证“画面看不到的按钮绝不出现标签”。未识别为行的控件及全量入口仍可能包含透明按钮；当前未接入 DOM 或屏幕视觉验证。
-
-滚轮路由与 AX 可见性取决于目标应用的实现。真实应用验证、工具限制、用户已确认的部分与尚待检查的部分逐项记录在 [验证记录](docs/VALIDATION.md)；性能口径见 [设计说明](docs/DESIGN.md)。
+仓库内的来源盘点与检索边界见 [来源与许可检查](docs/PROVENANCE.md)。Apple 系统框架、系统字体和 SF Symbols 由操作系统提供，其权利不因本项目采用 MIT 而改变。
