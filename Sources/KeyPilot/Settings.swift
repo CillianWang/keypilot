@@ -49,7 +49,7 @@ final class Settings: ObservableObject {
     func show() {
         if window == nil {
             let w=NSWindow(contentRect:NSRect(x:0,y:0,width:980,height:730),styleMask:[.titled,.closable,.miniaturizable,.resizable,.fullSizeContentView],backing:.buffered,defer:false)
-            w.title="KeyPilot 设置"; w.isReleasedWhenClosed=false
+            w.title="Keylian 设置"; w.isReleasedWhenClosed=false
             w.titleVisibility = .hidden; w.titlebarAppearsTransparent=true
             w.backgroundColor = .windowBackgroundColor
             w.contentMinSize=NSSize(width:860,height:650)

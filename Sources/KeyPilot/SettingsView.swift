@@ -5,7 +5,7 @@ enum SettingsPage:String,CaseIterable {
     case general,appearance,shortcuts,connection
     var title:String { switch self { case .general:return "通用"; case .appearance:return "外观"; case .shortcuts:return "快捷键"; case .connection:return "连接与权限" } }
     var symbol:String { switch self { case .general:return "slider.horizontal.3"; case .appearance:return "circle.lefthalf.filled"; case .shortcuts:return "command"; case .connection:return "checkmark.shield" } }
-    var subtitle:String { switch self { case .general:return "按你的节奏，选择、滚动与点击。"; case .appearance:return "清晰的标签，轻一点的存在感。"; case .shortcuts:return "让每一步，都留在键盘上。"; case .connection:return "管理 KeyPilot 与 macOS 的连接。" } }
+    var subtitle:String { switch self { case .general:return "按你的节奏，选择、滚动与点击。"; case .appearance:return "清晰的标签，轻一点的存在感。"; case .shortcuts:return "让每一步，都留在键盘上。"; case .connection:return "管理 Keylian 与 macOS 的连接。" } }
 }
 
 private enum SettingsTheme {
@@ -69,7 +69,7 @@ struct SettingsView:View {
             HStack(spacing:9) {
                 Image(nsImage:Brand.image(size:48)).resizable().frame(width:48,height:48).accessibilityHidden(true)
                 VStack(alignment:.leading,spacing:3) {
-                    Text("KeyPilot").font(.system(size:19,weight:.semibold,design:.rounded))
+                    Text("Keylian").font(.system(size:19,weight:.semibold,design:.rounded))
                     Text("键盘导航").font(.system(size:11)).foregroundStyle(.secondary)
                 }
             }.padding(.leading,15).padding(.top,48).padding(.bottom,34)
@@ -110,11 +110,11 @@ struct SettingsView:View {
                 Image(systemName:"keyboard").font(.system(size:25,weight:.light)).foregroundStyle(SettingsTheme.accent)
                     .frame(width:52,height:52).background(RoundedRectangle(cornerRadius:14).fill(SettingsTheme.mint.opacity(0.24)))
                 VStack(alignment:.leading,spacing:7) {
-                    Text("启用 KeyPilot").font(.system(size:16,weight:.semibold))
+                    Text("启用 Keylian").font(.system(size:16,weight:.semibold))
                     HStack(spacing:5) { Text("随时按").foregroundStyle(.secondary); Keycap("⇧⌘Space"); Text("开始导航").foregroundStyle(.secondary) }.font(.system(size:11))
                 }
                 Spacer()
-                Toggle("启用 KeyPilot",isOn:$settings.values.enabled).labelsHidden().toggleStyle(.switch).accessibilityLabel("启用 KeyPilot")
+                Toggle("启用 Keylian",isOn:$settings.values.enabled).labelsHidden().toggleStyle(.switch).accessibilityLabel("启用 Keylian")
             }.padding(21).background(RoundedRectangle(cornerRadius:16).fill(SettingsTheme.mint.opacity(0.10)))
                 .overlay(RoundedRectangle(cornerRadius:16).strokeBorder(SettingsTheme.accent.opacity(0.14),lineWidth:1))
             SettingsSection("导航方式") {
@@ -127,7 +127,7 @@ struct SettingsView:View {
                 Divider()
                 SettingSlider(title:"按住 Shift 加速",value:$settings.values.acceleration,range:1...5,step:0.1,display:String(format:"%.1f ×",settings.values.acceleration),low:"1×",high:"5×")
             }
-            Text("按住 J / K 向下或向上滚动；松开即停。关闭设置后，KeyPilot 仍在菜单栏运行。")
+            Text("按住 J / K 向下或向上滚动；松开即停。关闭设置后，Keylian 仍在菜单栏运行。")
                 .font(.system(size:11)).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
         }
     }
@@ -191,7 +191,7 @@ struct SettingsView:View {
                 Image(systemName:healthy ? "checkmark.shield":"shield").font(.system(size:30,weight:.light)).foregroundStyle(SettingsTheme.accent)
                 VStack(alignment:.leading,spacing:6) {
                     Text(healthy ? "一切就绪":status).font(.system(size:20,weight:.semibold))
-                    Text(healthy ? "KeyPilot 已连接，可以开始键盘导航。":"完成下方连接检查后即可开始导航。")
+                    Text(healthy ? "Keylian 已连接，可以开始键盘导航。":"完成下方连接检查后即可开始导航。")
                         .font(.system(size:12)).foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -204,7 +204,7 @@ struct SettingsView:View {
                 }.padding(20)
                 Divider()
                 HStack {
-                    connectionLabel("全局快捷键",detail:settings.values.enabled ? "⇧⌘Space  /  ⇧⌘J":"KeyPilot 暂停时，快捷键也会停用。",ready:settings.hotkeysReady)
+                    connectionLabel("全局快捷键",detail:settings.values.enabled ? "⇧⌘Space  /  ⇧⌘J":"Keylian 暂停时，快捷键也会停用。",ready:settings.hotkeysReady)
                     Spacer(minLength:20)
                     Button("重新连接") { settings.reconnect?() }.controlSize(.large)
                 }.padding(20)

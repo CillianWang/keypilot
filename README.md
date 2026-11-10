@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="Resources/Brand/KeyPilot.svg" width="96" height="96" alt="KeyPilot 图标">
+  <img src="Resources/Brand/Keylian.svg" width="96" height="96" alt="Keylian 图标">
 </p>
 
-# KeyPilot
+# Keylian
 
 **用键盘选区域、点按钮、滚动页面。**
 
-KeyPilot 是一个原生 macOS 菜单栏工具：按下快捷键，为前台窗口中可操作的控件显示字母标签，输入标签即可点击。用 `J` / `K` 滚动，用 `I` 临时输入文字，让双手更少离开键盘。
+Keylian（原 KeyPilot）是一个原生 macOS 菜单栏工具：按下快捷键，为前台窗口中可操作的控件显示字母标签，输入标签即可点击。用 `J` / `K` 滚动，用 `I` 临时输入文字，让双手更少离开键盘。
 
 Native keyboard navigation for macOS, built with Swift, AppKit, and Accessibility APIs.
 
@@ -25,19 +25,21 @@ Native keyboard navigation for macOS, built with Swift, AppKit, and Accessibilit
 | 临时输入 | 按 `I` 透传文字与快捷键，按 `Esc` 回到导航 |
 | 调整外观 | 浅色、深色、茶色、跟随系统；可调字号、边框颜色和动画 |
 
-![KeyPilot 外观设置与标签预览](docs/images/settings-appearance.png)
+![Keylian 外观设置与标签预览](docs/images/settings-appearance.png)
 
 *由实际设置视图离屏渲染的示例，标签内容为模拟数据；不代表第三方应用兼容性或桌面实时毛玻璃效果。*
 
 ## 开始使用
 
-当前提供 **0.1.0（build 17）未公证测试版**，包含 Apple Silicon 与 Intel 两种架构，无需安装 Xcode、Swift 或 Python。
+当前提供 **0.1.1（build 18）未公证测试版**，包含 Apple Silicon 与 Intel 两种架构，无需安装 Xcode、Swift 或 Python。
 
-**[下载 macOS 通用版 DMG](https://github.com/CillianWang/keypilot/releases/download/v0.1.0/KeyPilot-0.1.0-macOS-universal.dmg)** · [ZIP 备用下载](https://github.com/CillianWang/keypilot/releases/download/v0.1.0/KeyPilot-0.1.0-macOS-universal.zip) · [发布说明与校验文件](https://github.com/CillianWang/keypilot/releases/tag/v0.1.0)
+**[下载 macOS 通用版 DMG](https://github.com/CillianWang/keypilot/releases/download/v0.1.1/Keylian-0.1.1-macOS-universal.dmg)** · [ZIP 备用下载](https://github.com/CillianWang/keypilot/releases/download/v0.1.1/Keylian-0.1.1-macOS-universal.zip) · [发布说明与校验文件](https://github.com/CillianWang/keypilot/releases/tag/v0.1.1)
 
-1. 打开 DMG，将 `KeyPilot.app` 复制到个人「应用程序」文件夹（`~/Applications/`）；若文件夹不存在，可在个人主文件夹下新建 `Applications`。
+1. 打开 DMG，将 `Keylian.app` 复制到个人「应用程序」文件夹（`~/Applications/`）；若文件夹不存在，可在个人主文件夹下新建 `Applications`。
 2. 打开 App，在「系统设置 → 隐私与安全性 → 辅助功能」中授权，再从菜单栏选择「重新连接」。
 3. 切到目标窗口，按 `⇧⌘Space` 开始导航，按 `Esc` 退出。
+
+**从 KeyPilot 升级：**先退出旧版，将旧 `KeyPilot.app` 移出个人「应用程序」文件夹并留作备份，再打开新 `Keylian.app`。既有设置会继续沿用；若系统要求重新授权，请选择新 App。源码安装脚本会自动备份并迁移旧名称的安装。
 
 当前包使用 Apple Development 证书签名，**尚未经过 Apple 公证**。首次打开若提示无法验证开发者，请在确认下载来源后按 [Apple 的官方说明](https://support.apple.com/en-us/102445)，在「隐私与安全性」中选择「仍要打开」。完整步骤见 [Mac 安装说明](docs/INSTALL.md)。
 
@@ -72,7 +74,7 @@ swift test
 
 ### 3. 初始化本机签名
 
-KeyPilot 固定使用同一个签名身份和安装路径，降低更新时辅助功能授权失效的可能性。每台新机器都需要初始化自己的签名，仓库不包含开发者的证书或私钥。
+Keylian 固定使用同一个签名身份和安装路径，降低更新时辅助功能授权失效的可能性。每台新机器都需要初始化自己的签名，仓库不包含开发者的证书或私钥。
 
 在「钥匙串访问」的「证书助理 → 创建证书」中创建用于**代码签名**的本机证书，或使用已有的有效开发证书。然后列出可用身份：
 
@@ -87,7 +89,7 @@ python3 scripts/signing.py init --identity '替换为你的40位证书SHA1指纹
 python3 scripts/signing.py check
 ```
 
-如果命令没有列出有效身份，请先确认钥匙串中的证书、关联私钥及其信任状态。脚本不会自动创建证书，也不会在失败时退回临时签名。已有 KeyPilot 安装时，需要沿用原签名身份。
+如果命令没有列出有效身份，请先确认钥匙串中的证书、关联私钥及其信任状态。脚本不会自动创建证书，也不会在失败时退回临时签名。已有 Keylian 安装时，需要沿用原签名身份。
 
 ### 4. 构建与安装
 
@@ -96,13 +98,15 @@ bash scripts/build.sh
 python3 scripts/install.py
 ```
 
-构建产物在 `dist/KeyPilot.app`。安装脚本会备份现有 App、偏好与签名配置，验证产物后安装到 `~/Applications/KeyPilot.app`，并启动应用。
+构建产物在 `dist/Keylian.app`。安装脚本会备份现有 App、偏好与签名配置，验证产物后安装到 `~/Applications/Keylian.app`，并启动应用。
+
+脚本也识别旧的 `~/Applications/KeyPilot.app`，将其移入本机备份目录；若替换或签名校验失败，会恢复原安装。
 
 ### 5. 授权并试用
 
-1. 在菜单栏找到 KeyPilot，打开「设置… → 连接与权限」。
-2. 打开「系统设置 → 隐私与安全性 → 辅助功能」，允许 `~/Applications/KeyPilot.app`。
-3. 回到 KeyPilot，点击「重新连接」，确认「辅助功能权限」和「全局快捷键」就绪。
+1. 在菜单栏找到 Keylian，打开「设置… → 连接与权限」。
+2. 打开「系统设置 → 隐私与安全性 → 辅助功能」，允许 `~/Applications/Keylian.app`。
+3. 回到 Keylian，点击「重新连接」，确认「辅助功能权限」和「全局快捷键」就绪。
 4. 切换到要操作的窗口，按 **`⇧⌘Space`** 开始导航。
 
 第一次可以按这个顺序试用：**唤出 → `Tab` 选择区域 → 输入屏幕上的按钮标签 → `J` / `K` 滚动 → `Esc` 退出**。默认完整标签匹配后自动点击，可在「通用」中关闭。
@@ -140,15 +144,17 @@ python3 scripts/install.py
 
 ## 隐私与本地数据
 
-KeyPilot 通过 macOS Accessibility API 读取前台应用的控件结构，并通过系统事件执行点击和滚动。应用不包含网络请求、云端服务、OCR 或屏幕截图逻辑；不会上传遥测，不记录输入文字、窗口标题、控件正文或 URL。
+Keylian 通过 macOS Accessibility API 读取前台应用的控件结构，并通过系统事件执行点击和滚动。应用不包含网络请求、云端服务、OCR 或屏幕截图逻辑；不会上传遥测，不记录输入文字、窗口标题、控件正文或 URL。
 
 | 数据 | 位置 |
 | --- | --- |
-| 应用 | `~/Applications/KeyPilot.app` |
+| 应用 | `~/Applications/Keylian.app` |
 | 偏好 | macOS UserDefaults，域名 `dev.pingy.keypilot` |
 | 固定签名配置、就绪状态 | `~/Library/Application Support/KeyPilot/` |
 | 安装备份 | `~/Library/Application Support/KeyPilot/Backups/` |
 | 本地诊断日志 | `~/Library/Logs/KeyPilot/metrics.jsonl` |
+
+为保留既有设置，Bundle ID、偏好域、签名配置及日志目录仍沿用旧标识；应用显示名称和安装包已统一为 Keylian。
 
 日志只记录计数、耗时、模式与错误状态，达到约 2 MB 后清理。签名私钥保留在系统钥匙串中。`artifacts/`、`.build/`、`dist/` 属于本机构建或验证输出，已被 Git 忽略。
 
@@ -156,10 +162,10 @@ KeyPilot 通过 macOS Accessibility API 读取前台应用的控件结构，并�
 
 | 问题 | 处理方式 |
 | --- | --- |
-| 安装后没有主窗口 | KeyPilot 是菜单栏应用，从菜单栏打开「设置…」；退出请使用菜单中的「退出 KeyPilot」 |
+| 安装后没有主窗口 | Keylian 是菜单栏应用，从菜单栏打开「设置…」；退出请使用菜单中的「退出 Keylian」 |
 | 快捷键没有反应 | 确认应用已启用、辅助功能权限已授予，再点「重新连接」；检查其他应用是否占用了相同快捷键。当前版本的两组唤出快捷键固定 |
 | 某个控件没有标签 | 尝试切换区域或按 `Space`；自绘控件若未向 Accessibility API 暴露结构，目前无法可靠识别 |
-| 标签太多，或出现看不见的按钮 | 启用按需展开行操作。部分应用会把透明按钮也暴露给辅助功能接口，KeyPilot 无法仅凭该接口准确判断视觉可见性 |
+| 标签太多，或出现看不见的按钮 | 启用按需展开行操作。部分应用会把透明按钮也暴露给辅助功能接口，Keylian 无法仅凭该接口准确判断视觉可见性 |
 | 更新时提示签名身份不匹配 | 恢复原证书及私钥，保留原签名配置；脚本会拒绝无声替换身份 |
 | 命令行自检的权限状态与 App 不同 | 终端派生进程的权限归属可能不同，以正常启动 App 的「连接与权限」页为准 |
 
@@ -183,9 +189,10 @@ docs/                       设计、验证记录与来源说明
 
 ```sh
 swift test
+python3 scripts/test-install-migration.py
 ```
 
-完整本地回归还需要已初始化的签名身份和已构建的 `dist/KeyPilot.app`：
+完整本地回归还需要已初始化的签名身份和已构建的 `dist/Keylian.app`：
 
 ```sh
 bash scripts/build.sh
@@ -200,16 +207,16 @@ python3 scripts/performance.py
 
 ```sh
 # 真实设置视图的示例渲染；使用隔离偏好
-dist/KeyPilot.app/Contents/MacOS/KeyPilot --render-settings "$PWD/artifacts/settings"
+dist/Keylian.app/Contents/MacOS/Keylian --render-settings "$PWD/artifacts/settings"
 
 # 从项目内矢量绘制代码导出 PNG 和 iconset
-dist/KeyPilot.app/Contents/MacOS/KeyPilot --export-brand "$PWD/artifacts/brand"
+dist/Keylian.app/Contents/MacOS/Keylian --export-brand "$PWD/artifacts/brand"
 
 # 查看命令行进程的基本状态
-~/Applications/KeyPilot.app/Contents/MacOS/KeyPilot --self-check
+~/Applications/Keylian.app/Contents/MacOS/Keylian --self-check
 
 # 读取前台窗口的结构计数；需要该进程具备辅助功能权限
-~/Applications/KeyPilot.app/Contents/MacOS/KeyPilot --scan-frontmost
+~/Applications/Keylian.app/Contents/MacOS/Keylian --scan-frontmost
 ```
 
 </details>
@@ -224,7 +231,7 @@ bash scripts/build.sh --universal
 python3 scripts/package-release.py
 ```
 
-输出在 `dist/releases/`。打包脚本要求已提交的工作区，沿用现有固定签名身份，不进行 Apple 公证；详见 [发布构建记录](docs/RELEASE-0.1.0.md)。
+输出在 `dist/releases/v<版本号>/`。打包脚本要求已提交的工作区，沿用现有固定签名身份，不进行 Apple 公证；详见 [发布构建记录](docs/RELEASE-0.1.1.md)。
 
 ## 许可证与来源
 

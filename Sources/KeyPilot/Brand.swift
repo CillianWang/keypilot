@@ -40,7 +40,7 @@ enum Brand {
             return true
         }
         image.isTemplate=template
-        image.accessibilityDescription="KeyPilot"
+        image.accessibilityDescription="Keylian"
         return image
     }
     static func export(to directory:String) throws {
@@ -60,6 +60,6 @@ enum Brand {
             try png(size).write(to:set.appendingPathComponent("icon_\(size)x\(size).png"))
             try png(size*2).write(to:set.appendingPathComponent("icon_\(size)x\(size)@2x.png"))
         }
-        try png(1024).write(to:root.appendingPathComponent("KeyPilot.png"))
+        try png(1024).write(to:root.appendingPathComponent("Keylian.png"))
     }
 }

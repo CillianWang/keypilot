@@ -158,7 +158,7 @@ final class NavigationController {
     private func enter() {
         guard preferences.enabled,foregroundPID != ProcessInfo.processInfo.processIdentifier else { machine.deactivate(); return }
         guard AXIsProcessTrusted() else {
-            machine.deactivate(); DispatchQueue.main.async { Settings.shared.trusted=false; Settings.shared.status="请在辅助功能设置中允许 KeyPilot，再点“重新连接”。"; Settings.shared.show() }; return
+            machine.deactivate(); DispatchQueue.main.async { Settings.shared.trusted=false; Settings.shared.status="请在辅助功能设置中允许 Keylian，再点“重新连接”。"; Settings.shared.show() }; return
         }
         if !capture.available { _=capture.prepare() }
         guard capture.available else { machine.deactivate(); DispatchQueue.main.async { Settings.shared.status="无法建立输入捕获，请确认辅助功能权限后重新连接。" }; return }

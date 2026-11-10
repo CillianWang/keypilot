@@ -68,7 +68,7 @@ final class InputCapture {
             CFRunLoopAddSource(runloop,source,.commonModes); ready.signal(); CFRunLoopRun()
             CFMachPortInvalidate(tap)
         }
-        worker.name="KeyPilot input"; worker.qualityOfService = .userInteractive; thread=worker; worker.start()
+        worker.name="Keylian input"; worker.qualityOfService = .userInteractive; thread=worker; worker.start()
         _=ready.wait(timeout:.now()+1)
         return available
     }

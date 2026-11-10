@@ -1,5 +1,7 @@
 # 来源与许可检查
 
+名称更新：项目现名为 **Keylian**（0.1.1 / build 18），原名 KeyPilot。以下同名检索与来源盘点针对改名前的版本；它不是对 Keylian 名称的完整商标清查。更名不改变已有内容的来源或 MIT 许可。
+
 检查日期：2026-11-10。对象：`CillianWang/keypilot` 初次导入提交 `1e41875e593ab5e7898075f73b0885a1a061468a` 的 40 个文件及唯一一条既有提交历史，以及本次补充的 README、MIT 许可证和设置预览图。
 
 **本次有限检查没有发现可确认的第三方代码复制、素材搬运或许可证冲突。发现已有同名键盘软件，名称混淆风险仍待进一步核查。** 这一结果不是“不侵权”的法律保证，也不替代创作记录或完整的代码相似性、商标与专利检索。
@@ -11,8 +13,8 @@
 | Swift 源码与测试 | `Sources/` 中 18 个 Swift 文件，`Tests/` 中 7 个测试文件 | 未发现第三方版权头、来源声明或大段附带的外部源码；维护者确认没有已知的外部复制、改编来源 |
 | 包依赖 | [Package.swift](../Package.swift) | 无远程包、二进制 target 或 vendored 依赖；`KeyPilotCore` 是本仓库内部 target |
 | 构建与安装脚本 | [scripts/](../scripts/) | Python 标准库、本地 `signing` 模块及 macOS 系统工具；未发现下载并打包外部源码的步骤 |
-| 应用图标 | [SVG](../Resources/Brand/KeyPilot.svg)、[Brand.swift](../Sources/KeyPilot/Brand.swift) | K 字母、箭头和圆角键帽由路径绘制；SVG 不引用外部图片或字体。维护者确认没有已知外部图标来源，未完成全网图形相似性检索 |
-| 设置预览图 | [settings-appearance.png](images/settings-appearance.png)、[SettingsPreview.swift](../Sources/KeyPilot/SettingsPreview.swift) | 来自本项目实际设置视图的既有示例渲染，视觉检查未见第三方应用画面或个人内容；以模拟数据演示标签 |
+| 应用图标 | [检查时的 SVG](https://github.com/CillianWang/keypilot/blob/v0.1.0/Resources/Brand/KeyPilot.svg)、[Brand.swift](../Sources/KeyPilot/Brand.swift) | K 字母、箭头和圆角键帽由路径绘制；SVG 不引用外部图片或字体。维护者确认没有已知外部图标来源，未完成全网图形相似性检索 |
+| 设置预览图 | [检查时的预览图](https://github.com/CillianWang/keypilot/blob/v0.1.0/docs/images/settings-appearance.png)、[SettingsPreview.swift](../Sources/KeyPilot/SettingsPreview.swift) | 来自本项目实际设置视图的既有示例渲染，视觉检查未见第三方应用画面或个人内容；以模拟数据演示标签 |
 | 系统界面元素 | [SettingsView.swift](../Sources/KeyPilot/SettingsView.swift)、[GlassLabel.swift](../Sources/KeyPilot/GlassLabel.swift) | 通过系统 API 使用 AppKit、SwiftUI、系统字体及 SF Symbols；未随源码附带 Apple 字体文件、SDK 或导出的符号素材包 |
 | 技术文档 | [DESIGN.md](DESIGN.md)、[VALIDATION.md](VALIDATION.md) | 包含 W3C、Apple、Chromium 的技术参考链接与行为概述；未发现附带整份外部文档或 Chromium 源文件 |
 

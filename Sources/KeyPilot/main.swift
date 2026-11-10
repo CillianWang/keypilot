@@ -14,7 +14,7 @@ final class AppDelegate:NSObject,NSApplicationDelegate,NSMenuDelegate {
         statusItem=NSStatusBar.system.statusItem(withLength:NSStatusItem.squareLength)
         statusItem.button?.image=Brand.image(size:18,template:true)
         let menu=NSMenu(); menu.delegate=self
-        for (title,action,key) in [("启用 KeyPilot",#selector(toggle),""),("设置…",#selector(showSettings),","),("重新连接",#selector(reconnect),""),("退出 KeyPilot",#selector(quit),"q")] {
+        for (title,action,key) in [("启用 Keylian",#selector(toggle),""),("设置…",#selector(showSettings),","),("重新连接",#selector(reconnect),""),("退出 Keylian",#selector(quit),"q")] {
             let item=NSMenuItem(title:title,action:action,keyEquivalent:key); item.target=self; menu.addItem(item)
         }
         statusItem.menu=menu

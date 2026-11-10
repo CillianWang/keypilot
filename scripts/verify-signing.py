@@ -17,9 +17,9 @@ def result(args):
 
 def main():
     data = signing.load()
-    source = ROOT / "dist/KeyPilot.app"
+    source = ROOT / "dist/Keylian.app"
     signing.verify(source)
-    with tempfile.TemporaryDirectory(prefix="keypilot-signature-regression-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="keylian-signature-regression-") as tmp:
         tmp = Path(tmp)
         first, second, changed, foreign = [tmp / name for name in ["one.app", "two.app", "tampered.app", "foreign.app"]]
         for app in [first,second,changed,foreign]:
@@ -39,7 +39,7 @@ def main():
         subprocess.run(["codesign","--force","--sign","-","--requirements",'=designated => identifier "dev.pingy.keypilot"',str(foreign)],check=True,capture_output=True)
         rejected=result(["codesign","--verify","--strict","-R","="+data["requirement"],str(foreign)])
         assert rejected.returncode != 0, "Same Bundle ID without pinned certificate was accepted"
-        environment=dict(os.environ,KEYPILOT_SIGNING_CONFIG=str(tmp/"missing.json"))
+        environment=dict(os.environ,KEYLIAN_SIGNING_CONFIG=str(tmp/"missing.json"))
         missing=subprocess.run(["python3",str(ROOT/"scripts/signing.py"),"check"],env=environment,capture_output=True,text=True)
         assert missing.returncode != 0 and not (tmp/"missing.json").exists(), "Missing config did not fail closed"
         report={"two_distinct_bundles_same_designated_requirement":True,"tampered_bundle_rejected":True,"same_bundle_id_without_pinned_certificate_rejected":True,"missing_config_rejected_without_creation":True,"different_certificate_signer":"not run: no second trusted signing identity; same-ID ad-hoc negative case passed"}

@@ -2,10 +2,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "KeyPilot",
+    name: "Keylian",
     platforms: [.macOS(.v13)],
     products: [.library(name: "KeyPilotCore", targets: ["KeyPilotCore"]),
-               .executable(name: "KeyPilot", targets: ["KeyPilot"])],
+               .executable(name: "Keylian", targets: ["KeyPilot"])],
     targets: [.target(name: "KeyPilotCore"),
               .executableTarget(name: "KeyPilot", dependencies: ["KeyPilotCore"],
                                 linkerSettings: [.linkedFramework("Carbon")]),

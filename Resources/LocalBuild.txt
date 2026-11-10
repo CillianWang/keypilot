@@ -1,2 +1,2 @@
-KeyPilot 0.1.0 (17)
+Keylian 0.1.1 (18)
 Original native macOS implementation. Local certificate signing; not Developer ID notarization.

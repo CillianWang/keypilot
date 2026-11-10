@@ -10,9 +10,14 @@ import subprocess
 import sys
 import tempfile
 
+# The bundle identifier and support directory preserve existing permissions and preferences.
 BUNDLE_ID = "dev.pingy.keypilot"
-CONFIG = Path(os.environ.get("KEYPILOT_SIGNING_CONFIG", str(Path.home() / "Library/Application Support/KeyPilot/signing.json")))
-INSTALL = Path.home() / "Applications/KeyPilot.app"
+CONFIG = Path(os.environ.get("KEYLIAN_SIGNING_CONFIG", os.environ.get("KEYPILOT_SIGNING_CONFIG", str(Path.home() / "Library/Application Support/KeyPilot/signing.json"))))
+INSTALL = Path.home() / "Applications/Keylian.app"
+LEGACY_INSTALL = Path.home() / "Applications/KeyPilot.app"
+
+def installed_apps():
+    return [app for app in (INSTALL, LEGACY_INSTALL) if app.exists()]
 
 def run(args, **kwargs):
     return subprocess.run(args, check=True, text=True, **kwargs)
@@ -36,8 +41,9 @@ def load():
     data = json.loads(CONFIG.read_text())
     if data["bundle_id"] != BUNDLE_ID or data["identity"] not in identities():
         raise RuntimeError("固定证书不可用或配置的 Bundle ID 不匹配；请在钥匙串恢复原身份。")
-    if INSTALL.exists() and installed_identity(INSTALL) != data["identity"]:
-        raise RuntimeError("现有安装与固定证书不同，已拒绝替换。")
+    for app in installed_apps():
+        if installed_identity(app) != data["identity"]:
+            raise RuntimeError(f"现有安装 {app.name} 与固定证书不同，已拒绝替换。")
     return data
 
 def initialize(identity=None):
@@ -48,8 +54,11 @@ def initialize(identity=None):
         print(f"已验证现有配置：{CONFIG}")
         return
     valid = identities()
-    if INSTALL.exists():
-        installed = installed_identity(INSTALL)
+    existing = installed_apps()
+    if existing:
+        installed = installed_identity(existing[0])
+        if any(installed_identity(app) != installed for app in existing[1:]):
+            raise RuntimeError("新旧名称的安装使用不同证书，已拒绝初始化。")
         if identity and identity.upper() != installed:
             raise RuntimeError("指定证书不同于已安装 App。")
         identity = installed
@@ -59,10 +68,10 @@ def initialize(identity=None):
     if identity not in valid:
         raise RuntimeError("证书及私钥未在本机钥匙串中形成有效代码签名身份。")
     requirement = f'identifier "{BUNDLE_ID}" and certificate leaf = H"{identity}"'
-    if INSTALL.exists():
+    if existing:
         # Verify the certificate binding before preserving the installed designated requirement.
-        run(["codesign", "--verify", "--strict", "-R", "=" + requirement, str(INSTALL)])
-        output = run(["codesign", "-d", "-r-", str(INSTALL)], capture_output=True)
+        run(["codesign", "--verify", "--strict", "-R", "=" + requirement, str(existing[0])])
+        output = run(["codesign", "-d", "-r-", str(existing[0])], capture_output=True)
         match = re.search(r"designated => (.*)", output.stdout + output.stderr)
         if match:
             requirement = match.group(1)
