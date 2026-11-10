@@ -12,7 +12,7 @@ Native keyboard navigation for macOS, built with Swift, AppKit, and Accessibilit
 
 **macOS 13+ · Swift 5.9+ · 无第三方包依赖 · 本机运行 · [MIT](LICENSE)**
 
-[开始使用](#开始使用) · [快捷键](#快捷键) · [常见问题](#常见问题) · [开发](#开发) · [来源与许可](docs/PROVENANCE.md)
+[下载安装](#开始使用) · [源码构建](#从源码构建) · [快捷键](#快捷键) · [常见问题](#常见问题) · [开发](#开发) · [来源与许可](docs/PROVENANCE.md)
 
 ## 可以做什么
 
@@ -31,7 +31,19 @@ Native keyboard navigation for macOS, built with Swift, AppKit, and Accessibilit
 
 ## 开始使用
 
-当前版本为 **0.1.0（build 16）**。目前提供源码构建，尚无可直接下载的 Developer ID 公证安装包。
+当前提供 **0.1.0（build 17）未公证测试版**，包含 Apple Silicon 与 Intel 两种架构，无需安装 Xcode、Swift 或 Python。
+
+**[下载 macOS 通用版 DMG](https://github.com/CillianWang/keypilot/releases/download/v0.1.0/KeyPilot-0.1.0-macOS-universal.dmg)** · [ZIP 备用下载](https://github.com/CillianWang/keypilot/releases/download/v0.1.0/KeyPilot-0.1.0-macOS-universal.zip) · [发布说明与校验文件](https://github.com/CillianWang/keypilot/releases/tag/v0.1.0)
+
+1. 打开 DMG，将 `KeyPilot.app` 复制到个人「应用程序」文件夹（`~/Applications/`）；若文件夹不存在，可在个人主文件夹下新建 `Applications`。
+2. 打开 App，在「系统设置 → 隐私与安全性 → 辅助功能」中授权，再从菜单栏选择「重新连接」。
+3. 切到目标窗口，按 `⇧⌘Space` 开始导航，按 `Esc` 退出。
+
+当前包使用 Apple Development 证书签名，**尚未经过 Apple 公证**。首次打开若提示无法验证开发者，请在确认下载来源后按 [Apple 的官方说明](https://support.apple.com/en-us/102445)，在「隐私与安全性」中选择「仍要打开」。完整步骤见 [Mac 安装说明](docs/INSTALL.md)。
+
+## 从源码构建
+
+需要修改或自行构建时，再按下面的流程准备开发环境。只使用应用可以直接下载上面的安装包。
 
 ### 1. 准备环境
 
@@ -56,7 +68,7 @@ cd keypilot
 swift test
 ```
 
-单元测试不需要初始化签名，也不需要授予辅助功能权限；其中包含 AppKit 测试，需要在 macOS 环境执行。
+单元测试不需要初始化签名，也不需要授予辅助功能权限；其中包含 AppKit 和 XCTest 测试，需要在 macOS 上使用带有 XCTest 的开发环境。若 Command Line Tools 缺少 XCTest，请安装完整 Xcode 并完成首次启动设置。
 
 ### 3. 初始化本机签名
 
@@ -203,6 +215,16 @@ dist/KeyPilot.app/Contents/MacOS/KeyPilot --export-brand "$PWD/artifacts/brand"
 </details>
 
 更详细的实现取舍见 [设计说明](docs/DESIGN.md)。提交 [Issue](https://github.com/CillianWang/keypilot/issues) 时，请附上 macOS 版本、芯片架构、应用版本、目标应用与复现步骤；只分享必要的诊断信息。
+
+维护者可构建通用二进制并生成包含许可、说明及 SHA-256 校验文件的安装包：
+
+```sh
+bash scripts/build.sh --universal
+# 先提交本次发布涉及的源码和文档，保留可追溯的 Git 版本
+python3 scripts/package-release.py
+```
+
+输出在 `dist/releases/`。打包脚本要求已提交的工作区，沿用现有固定签名身份，不进行 Apple 公证；详见 [发布构建记录](docs/RELEASE-0.1.0.md)。
 
 ## 许可证与来源
 
